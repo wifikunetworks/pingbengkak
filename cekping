@@ -1,0 +1,25 @@
+:local threshold 100
+:local pingCount 20
+:local pingInterval "1s"
+:local routingTable "isp1"
+:local mangleComment "isp1"
+
+:local totalPingTime 0
+
+# Lakukan 20 ping ke alamat 8.8.8.8 dan hitung total waktu ping
+:for i from=1 to=$pingCount do={
+    :local pingResult [/ping address=8.8.8.8 count=1 interval=$pingInterval]
+    :local pingTime [:pick $pingResult ([:find $pingResult "time="] + 5) [:find $pingResult "ms"]]
+    :set totalPingTime ($totalPingTime + $pingTime)
+    :delay $pingInterval
+}
+
+# Hitung rata-rata ping dari total waktu ping
+:local avgPingTime ($totalPingTime / $pingCount)
+
+# Periksa apakah rata-rata ping di bawah ambang batas
+:if ($avgPingTime > $threshold) do={
+    /ip firewall mangle disable [find comment=$mangleComment]
+} else={
+    /ip firewall mangle enable [find comment=$mangleComment]
+}
