@@ -1,0 +1,19 @@
+:local avgPing
+:local threshold 100
+:local pingCount 5
+:local pingInterval "1s"
+:local routingTable "isp1"
+:local mangleComment "isp1"
+
+# Lakukan ping ke alamat 8.8.8.8
+:local pingResult [/ping address=8.8.8.8 count=$pingCount interval=$pingInterval]
+
+# Ambil rata-rata ping dari hasil ping
+:set avgPing [:pick $pingResult ([:find $pingResult "avg:"] + 5) [:find $pingResult "ms"]]
+
+# Periksa apakah rata-rata ping di bawah ambang batas
+:if ($avgPing > $threshold) do={
+    /ip firewall mangle disable [find comment=$mangleComment]
+} else={
+    /ip firewall mangle enable [find comment=$mangleComment]
+}
