@@ -1,3 +1,4 @@
+#Script By: Keripik Kinta
 :local threshold 100
 :local pingCount 20
 :local pingInterval "1s"
