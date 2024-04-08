@@ -20,6 +20,8 @@
 # Periksa apakah rata-rata ping di bawah ambang batas
 :if ($avgPingTime > $threshold) do={
     /ip firewall mangle disable [find comment=$mangleComment]
+    /ip route set [find comment=$mangleComment] distance=4
 } else={
     /ip firewall mangle enable [find comment=$mangleComment]
+    /ip route set [find comment=$mangleComment] distance=1
 }
